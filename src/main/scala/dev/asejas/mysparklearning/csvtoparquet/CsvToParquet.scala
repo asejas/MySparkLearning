@@ -38,7 +38,7 @@ object CsvToParquet extends Serializable {
       .getOrCreate()
   }
 
-  private def readCustomersCsv(spark: SparkSession, filename: String): DataFrame = {
+  def readCustomersCsv(spark: SparkSession, filename: String): DataFrame = {
     log.info("File to process: " + filename)
 
     spark.read
@@ -47,8 +47,12 @@ object CsvToParquet extends Serializable {
       .csv(filename)
   }
 
-  private def saveAsParquet(destinationFilename: String, df: DataFrame): Unit = {
+  def saveAsParquet(destinationFilename: String, df: DataFrame): Unit = {
     log.info("Destination file: " + destinationFilename)
-    df.write.parquet(destinationFilename)
+
+    df.write
+      .format("parquet")
+      .mode("overwrite")
+      .save(destinationFilename)
   }
 }
