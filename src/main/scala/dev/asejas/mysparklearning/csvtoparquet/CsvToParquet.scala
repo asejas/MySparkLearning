@@ -16,16 +16,16 @@ object CsvToParquet extends Serializable {
     log.info("Starting Csv to Parquet!")
 
     if (args.length < 2) {
-      log.error("Expected: sourceFilename targetFilename")
+      log.error("Expected: sourceFilename targetPath")
       System.exit(1)
     }
     val sourceFilename = args(0)
-    val destinationFilename = args(1)
+    val destinationPath = args(1)
     val spark = createSession
 
     val customersDF = readCustomersCsv(spark, sourceFilename)
     customersDF.show()
-    saveAsParquet(destinationFilename, customersDF)
+    saveAsParquet(destinationPath, customersDF)
 
     spark.stop()
     log.info("Ending CsvToParquet!")
@@ -47,12 +47,12 @@ object CsvToParquet extends Serializable {
       .csv(filename)
   }
 
-  def saveAsParquet(destinationFilename: String, df: DataFrame): Unit = {
-    log.info("Destination file: " + destinationFilename)
+  def saveAsParquet(Path: String, df: DataFrame): Unit = {
+    log.info("Destination path: " + Path)
 
     df.write
       .format("parquet")
       .mode("overwrite")
-      .save(destinationFilename)
+      .save(Path)
   }
 }
